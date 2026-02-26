@@ -16,9 +16,10 @@ useEffect(() => {
       const imei = DeviceInfo.getUniqueIdSync();
       const response = await getDeviceByImei(imei);
       const device = response.data;
+      console.log('Device found:', device.status);
 
       // Device exists but NOT active
-      if (device.status !== 'Active') {
+      if (device.status !== 'active') {
         Alert.alert(
           'Device Deactivated',
           `Your device is not active.\nIMEI: ${imei}\nPlease contact the administrator.`,

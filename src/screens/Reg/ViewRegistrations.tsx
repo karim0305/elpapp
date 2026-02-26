@@ -10,15 +10,47 @@ import {
 import { getRegistrationsByMill } from '../../api/elpApi';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { registrationSocket } from '../../utils/socket/RegistrationSocket';
 
 const Registrations = () => {
   const [searchText, setSearchText] = useState('');
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchRegistrations();
-  }, []);
+ useEffect(() => {
+  fetchRegistrations();
+
+  // 🟢 NEW REGISTRATION
+  registrationSocket.on('registration_created', (newReg) => {
+    setData((prev) => {
+      // avoid duplicates
+      if (prev.some((r) => r._id === newReg._id)) {
+        return prev;
+      }
+      return [newReg, ...prev];
+    });
+  });
+
+  // ✏️ UPDATE REGISTRATION
+  registrationSocket.on('registration_updated', (updatedReg) => {
+    setData((prev) =>
+      prev.map((r) =>
+        r._id === updatedReg._id ? updatedReg : r,
+      ),
+    );
+  });
+
+  // ❌ DELETE REGISTRATION
+  registrationSocket.on('registration_deleted', ({ id }) => {
+    setData((prev) => prev.filter((r) => r._id !== id));
+  });
+
+  return () => {
+    registrationSocket.off('registration_created');
+    registrationSocket.off('registration_updated');
+    registrationSocket.off('registration_deleted');
+  };
+}, []);
 
   const fetchRegistrations = async () => {
     const storedMillId = await AsyncStorage.getItem('millid');

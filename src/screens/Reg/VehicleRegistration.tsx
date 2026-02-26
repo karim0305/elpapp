@@ -15,6 +15,7 @@ import { addRegistration } from '../../api/elpApi';
 import { getCurrentLocation } from '../../utils/getCurrentLocation';
 import { get } from 'react-native/Libraries/NativeComponent/NativeComponentRegistry';
 import { getCellData } from '../../utils/getCellId';
+import { registrationSocket } from '../../utils/socket/RegistrationSocket';
 
 
 // Your Cloudinary info
@@ -34,6 +35,30 @@ const VehicleRegistration = () => {
   const [driverImage, setDriverImage] = useState<any>(null);
   const [vehicleImage, setVehicleImage] = useState<any>(null);
   const [permitImage, setPermitImage] = useState<any>(null);
+
+
+
+  
+useEffect(() => {
+  registrationSocket.on('registration_created', data => {
+    console.log('🟢 New Registration:', data);
+    // refresh list or append
+  });
+
+  registrationSocket.on('registration_updated', data => {
+    console.log('✏️ Updated Registration:', data);
+  });
+
+  registrationSocket.on('registration_deleted', ({ id }) => {
+    console.log('❌ Deleted Registration:', id);
+  });
+
+  return () => {
+    registrationSocket.off('registration_created');
+    registrationSocket.off('registration_updated');
+    registrationSocket.off('registration_deleted');
+  };
+}, []);
 
   /* ---------------- INIT ---------------- */
   useEffect(() => {
@@ -158,6 +183,7 @@ const VehicleRegistration = () => {
       // Full payload with dummy data for required fields
 
       const payload = {
+        userid: deviceId,
         millid,                  // ObjectId string from AsyncStorage
         deviceId,                // ObjectId string from AsyncStorage (device)
         elpId: elpid,                   // ObjectId string from AsyncStorage (elp)
@@ -170,7 +196,7 @@ const VehicleRegistration = () => {
         vehicleImage: vehicleUrl,// Cloudinary URL
         permitImage: permitUrl,  // Cloudinary URL
         remarks: 'Test submission', // optional dummy data
-        status: 'Active',         // required
+        status: 'Pending',         // required
       };
       if (gps && typeof gps.latitude === 'number' && typeof gps.longitude === 'number') {
         payload.gps = gps;
