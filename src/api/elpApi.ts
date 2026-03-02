@@ -73,7 +73,7 @@ export const addElp = (data: any) => axios.post(`${baseUrl}/elp`, data);
  */
 export const getElps = (millId?: string) => {
   if (millId) {
-    return axios.get(`${baseUrl}/elp`, { params: { millid: millId } });
+    return axios.get(`${baseUrl}/elp/millid`, { params: { millid: millId } });
   }
   return axios.get(`${baseUrl}/elp`);
 };
