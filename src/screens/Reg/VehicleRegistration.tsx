@@ -7,6 +7,7 @@ import {
   Image,
   Alert,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import Geolocation from '@react-native-community/geolocation';
@@ -189,9 +190,9 @@ useEffect(() => {
         elpId: elpid,                   // ObjectId string from AsyncStorage (elp)
         gps: gps ?? undefined,   // optional GPS object { latitude, longitude }
         towerId: towerId ?? undefined,     // optional dummy data
-        haulage: 'Dummy Haulage',// optional dummy data
-        vehicleNumber: 'VEH123', // optional dummy data
-        documentNo: 'DOC123',    // optional dummy data
+        haulage: '',// optional dummy data
+        vehicleNumber: '', // optional dummy data
+        documentNo: '',    // optional dummy data
         driverImage: driverUrl,  // Cloudinary URL
         vehicleImage: vehicleUrl,// Cloudinary URL
         permitImage: permitUrl,  // Cloudinary URL
@@ -205,7 +206,7 @@ useEffect(() => {
 
       await addRegistration(payload);
       resetForm();
-      Alert.alert('Success', 'Registration completed');
+      Toast.show({ type: 'success', text1: 'Registration completed', visibilityTime: 3000 });
 
     } catch (err: any) {
       console.log('Submission error:', err.response || err);
@@ -213,21 +214,16 @@ useEffect(() => {
     }
   };
 
-    const resetForm = () => ({
-        millid,                  // ObjectId string from AsyncStorage
-        deviceId,
-        elpId: elpid,                   // ObjectId string from AsyncStorage (elp)
-        gps:"",   // optional GPS object { latitude, longitude }
-        towerId: "",     // optional dummy data
-        haulage: '',// optional dummy data
-        vehicleNumber: '', // optional dummy data
-        documentNo: '',    // optional dummy data
-        driverImage: null,  // Cloudinary URL
-        vehicleImage: null,// Cloudinary URL
-        permitImage: null,  // Cloudinary URL
-        remarks: '', // optional dummy data
-        status: 'Pending',         // required
-      });
+  const resetForm = () => {
+    // clear images and optional fields but keep device identifiers
+    setDriverImage(null);
+    setVehicleImage(null);
+    setPermitImage(null);
+    setGps(gps);
+    setAccuracy('0');
+    setTowerId(towerId);
+    // other fields remain from AsyncStorage, if needed can reload using loadLocalData()
+  };
 
   /* ---------------- UI ---------------- */
   return (

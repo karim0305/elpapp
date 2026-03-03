@@ -28,7 +28,8 @@ const OntheWay = () => {
 
  const fetchOntheWay = async () => {
   const storedMillId = await AsyncStorage.getItem('millid');
-
+  const storedDeviceId = await AsyncStorage.getItem('deviceId');
+  console.log('Stored MillId:', storedMillId, 'Stored DeviceId:', storedDeviceId);
   if (!storedMillId) {
     console.warn('MillId missing');
     return;
@@ -36,15 +37,16 @@ const OntheWay = () => {
 
   try {
     setLoading(true);
-
+ 
     // 🔹 fetch both APIs
     const [regRes, arrivalRes] = await Promise.all([
-      getRegForArrival(storedMillId),
+      getRegistrationsByMill(storedMillId, storedDeviceId || ''),
       getArrivals(),
     ]);
 
     const registrations = regRes.data || [];
     const arrivals = arrivalRes.data || [];
+console.log('Fetched Registrations:', registrations);
 
     // 🔹 collect regids that already arrived
     const arrivedRegIds = new Set(

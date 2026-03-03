@@ -14,7 +14,7 @@ const AppNavigator = () => {
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="deficedetail" component={RegisterModeScreen} />
       <Stack.Screen name="MainTabs" component={BottomTabs} />
-       <Stack.Screen name="MainTabsArrival" component={BottomTabsArrival} />
+      <Stack.Screen name="MainTabsArrival" component={BottomTabsArrival} />
 
     </Stack.Navigator>
   );

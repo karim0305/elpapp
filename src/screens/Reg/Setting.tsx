@@ -1,8 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // You need react-native-vector-icons installed
 
 const Setting = () => {
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+  const [towerId, setTowerId] = useState('');
+  const [companyCode, setCompanyCode] = useState('');
+  const [lpCode, setLpCode] = useState('');
+  const [serverHost, setServerHost] = useState('');
+  const [accuracy, setAccuracy] = useState('');
+  const [checkReg, setCheckReg] = useState('');
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const millJson = await AsyncStorage.getItem('millInfo');
+        const elpJson = await AsyncStorage.getItem('elpInfo');
+        if (millJson) {
+          const mill = JSON.parse(millJson);
+          setLatitude(mill.latitude ?? '');
+          setLongitude(mill.longitude ?? '');
+          setTowerId(mill.towerId ?? '');
+          setServerHost(mill.serverHost ?? '');
+          setAccuracy(mill.accuracy?.toString() ?? '');
+          setCheckReg(mill.checkReg ? 'YES' : 'NO');
+        }
+        if (elpJson) {
+          const elp = JSON.parse(elpJson);
+          setCompanyCode(elp.companyCode ?? '');
+          setLpCode(elp.lpCode ?? '');
+        }
+      } catch (e) {
+        console.warn('Failed to load settings', e);
+      }
+    };
+    loadSettings();
+  }, []);
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <Text style={styles.title}>LP</Text>
@@ -18,10 +54,10 @@ const Setting = () => {
         </View>
         <View style={styles.rowButtons}>
           <View style={styles.buttonOutlined}>
-            <Text style={styles.buttonOutlinedText}>Lat: 24.67435</Text>
+            <Text style={styles.buttonOutlinedText}>Lat: {latitude || 'N/A'}</Text>
           </View>
           <View style={styles.buttonOutlined}>
-            <Text style={styles.buttonOutlinedText}>Long: 67.67435</Text>
+            <Text style={styles.buttonOutlinedText}>Long: {longitude || 'N/A'}</Text>
           </View>
         </View>
       </View>
@@ -31,7 +67,7 @@ const Setting = () => {
           <Icon name="tower-cell" size={24} color="#ccc" />
         </View>
         <View style={[styles.buttonOutlined, { flex: 1 }]}>
-          <Text style={styles.buttonOutlinedText}>Tower Id : 35181</Text>
+          <Text style={styles.buttonOutlinedText}>Tower Id : {towerId || 'N/A'}</Text>
         </View>
       </View>
 
@@ -45,7 +81,7 @@ const Setting = () => {
           <Icon name="store" size={24} color="#ccc" />
         </View>
         <View style={[styles.buttonOutlined, { flex: 1 }]}>
-          <Text style={styles.buttonOutlinedText}>Company Code : 01</Text>
+          <Text style={styles.buttonOutlinedText}>Company Code : {companyCode || 'N/A'}</Text>
         </View>
       </View>
 
@@ -54,7 +90,7 @@ const Setting = () => {
           <Icon name="store" size={24} color="#ccc" />
         </View>
         <View style={[styles.buttonOutlined, { flex: 1 }]}>
-          <Text style={styles.buttonOutlinedText}>LP Code : 1091</Text>
+          <Text style={styles.buttonOutlinedText}>LP Code : {lpCode || 'N/A'}</Text>
         </View>
       </View>
 
@@ -63,7 +99,7 @@ const Setting = () => {
           <Icon name="web" size={24} color="#ccc" />
         </View>
         <View style={[styles.buttonOutlined, { flex: 1 }]}>
-          <Text style={styles.buttonOutlinedText}>Server Host : chaudhry.ecloud12.com</Text>
+          <Text style={styles.buttonOutlinedText}>Server Host : {serverHost || 'N/A'}</Text>
         </View>
       </View>
 
@@ -72,7 +108,7 @@ const Setting = () => {
           <Icon name="web" size={24} color="#ccc" />
         </View>
         <View style={[styles.buttonOutlined, { flex: 1 }]}>
-          <Text style={styles.buttonOutlinedText}>Accuracy : 100</Text>
+          <Text style={styles.buttonOutlinedText}>Accuracy : {accuracy || 'N/A'}</Text>
         </View>
       </View>
 
@@ -80,7 +116,7 @@ const Setting = () => {
         <View style={styles.iconContainer}>
           <Icon name="truck-check" size={24} color="#ccc" />
         </View>
-        <Text style={styles.checkRegText}>CHECK REG ON ARRIVAL : YES</Text>
+        <Text style={styles.checkRegText}>CHECK REG ON ARRIVAL : {checkReg || 'N/A'}</Text>
       </View>
     </ScrollView>
   );

@@ -175,9 +175,9 @@ const ArrivalScreen = ({
         elpId: elpid,                   // ObjectId string from AsyncStorage (elp)
         gps: gps ?? undefined,   // optional GPS object { latitude, longitude }
         towerId: towerId ?? undefined,     // optional dummy data
-        haulage: 'Dummy Haulage',// optional dummy data
-        vehicleNumber: 'VEH123', // optional dummy data
-        documentNo: 'DOC123',    // optional dummy data
+        haulage: '',// optional dummy data
+        vehicleNumber: '', // optional dummy data
+        documentNo: '',    // optional dummy data
         driverImage: driverUrl,  // Cloudinary URL
         vehicleImage: vehicleUrl,// Cloudinary URL
         permitImage: permitUrl,  // Cloudinary URL
